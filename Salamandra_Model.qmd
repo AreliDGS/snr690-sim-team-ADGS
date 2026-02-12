@@ -4,21 +4,45 @@ format: html
 editor: visual
 ---
 
-### **Activity 1: Salamander Survival (Partner A) — Station 1 from Week 3**
+# **Activity 1: Salamander Survival (Partner A) — Station 1 from Week 3**
 
-**Scenario:** A researcher wants to know if canopy cover affects salamander survival in forest fragments. They marked 20 salamanders in each of 12 forest fragments and recorded whether each salamander survived (alive/dead) after one year. Canopy cover was measured as a percentage for each fragment.
+#### - What is the research question? 
 
-**The truth (what we’re simulating):**
+Is canopy cover affects salamander survival in forest fragments
+
+#### - What is the experimental design? 
 
 -   12 forest fragments
 
 -   20 salamanders per fragment (240 total salamanders)
 
--   Canopy cover ranges from 40% to 90%
+-   Canopy cover ranges from 40% to 90%. Canopy cover was measured as a percentage for each fragment.
 
--   True effect of canopy cover on survival probability: for every 10% increase in canopy cover, the log-odds of survival increases by 0.09
+#### -  What is the response variable? 
 
--   We’ll use a logistic relationship (since survival is binary), but don’t worry about the math - just run the code and comment what each line does
+Survival rate (0 = dead, 1 = alive)
+
+#### - What type of variable is it? 
+
+Binomial (dicotómica)
+
+#### - Why does this structure matter for the analysis?
+
+We have to use a logistic relationship
+
+\#
+
+## Step by step
+
+### 1. Simulate the data set 
+
+-   Define the experimental structure
+
+-   Create fragment-level data
+
+-   Create salamander-level data
+
+-   Merge to get canopy cover for each salamander
 
 ```{r}
 library(tidyverse)
@@ -26,14 +50,14 @@ library(lme4)  # for mixed models later
 
 set.seed(42)
 
+```
+
+```{r}
 # Define the experimental structure
 n_fragments <- 12 # Vector of number of fragments
 n_salamanders_per_fragment <- 20 # Vector of number of sampled salamanders per fragments
 n_total <- n_fragments * n_salamanders_per_fragment # Define the experimental units
 
-# Define the truth
-true_intercept <- -3.5  # Define the intercepts of the model        
-true_canopy_effect <- 0.09 # Define the value of the canopy effect   
 
 # Create fragment-level data
 fragment_data <- data.frame(
@@ -49,7 +73,22 @@ salamander_data <- data.frame(
 
 # Merge to get canopy cover for each salamander
 salamander_data <- salamander_data %>%
-  left_join(fragment_data, by = "fragment_id")m
+  left_join(fragment_data, by = "fragment_id")
+```
+
+### 2. Define the coefficients of my model
+
+-    Create the objects with the values of the true intercept and true canopy effect
+
+-   Simulate survival using logistic regression formula
+
+-   Check the results
+
+```{r}
+# Define the truth
+true_intercept <- -3.5  # Define the intercepts of the model        
+true_canopy_effect <- 0.09 # Define the value of the canopy effect   
+
 
 # Simulate survival using logistic regression formula
 salamander_data <- salamander_data %>%
@@ -61,7 +100,15 @@ salamander_data <- salamander_data %>%
 
 # Look at the data
 head(salamander_data)
-summary(salamander_data)
+summary(salamander_data) # Get the coefficientes of the model 
+
+```
+
+### 3. Visualization of the model 
+
+-   Table: proportion surviving in each fragment
+
+```{r}
 
 # Visualize: proportion surviving in each fragment
 fragment_summary <- salamander_data %>%
@@ -73,7 +120,7 @@ fragment_summary <- salamander_data %>%
     .groups = "drop"
   )
 
-ggplot(fragment_summary, aes(x = canopy_cover, y = prop_survived)) +
+plot1 <- ggplot(fragment_summary, aes(x = canopy_cover, y = prop_survived)) +
   geom_point(size = 4, alpha = 0.7) +
   labs(
     title = "Simulated: Canopy Cover vs. Salamander Survival",
@@ -83,4 +130,7 @@ ggplot(fragment_summary, aes(x = canopy_cover, y = prop_survived)) +
   ) +
   ylim(0, 1) +
   theme_minimal(base_size = 14)
+
+fragment_summary
+plot1
 ```

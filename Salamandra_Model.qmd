@@ -1,0 +1,21 @@
+---
+title: "Salamandra Model - AreliDGS"
+format: html
+editor: visual
+---
+
+### **Activity 1: Salamander Survival (Partner A) — Station 1 from Week 3**
+
+**Scenario:** A researcher wants to know if canopy cover affects salamander survival in forest fragments. They marked 20 salamanders in each of 12 forest fragments and recorded whether each salamander survived (alive/dead) after one year. Canopy cover was measured as a percentage for each fragment.
+
+**The truth (what we’re simulating):**
+
+-   12 forest fragments
+
+-   20 salamanders per fragment (240 total salamanders)
+
+-   Canopy cover ranges from 40% to 90%
+
+-   True effect of canopy cover on survival probability: for every 10% increase in canopy cover, the log-odds of survival increases by 0.09
+
+-   We’ll use a logistic relationship (since survival is binary), but don’t worry about the math - just run the code and comment what each line does

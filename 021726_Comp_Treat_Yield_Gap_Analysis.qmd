@@ -1,0 +1,56 @@
+---
+title: "Comparing_Treatments_Yield_Gap_Analysis"
+author: "ADGS"
+format: html
+editor: visual
+date: 'Class Feb 17, 2026'
+---
+
+## Simulate data
+
+```{r}
+# I will simulate the data. 4 repliacation (Block), 2 sowing times (ST), 7 Genotypes (G), 2 years (Year)
+set.seed(42)
+dat<-expand.grid(Block = factor(1:4),
+                 ST = factor(c("Autumn", "Spring")),
+                 Genotype = factor(paste0("V", 1:6)),
+                 Year = factor(2018:2019))
+dat$yield <- 1.8 +
+   0.30 * (dat$ST == "Autumn") +
+   c(0.10, -0.10, 0.40, -0.20, 0.05, 0.10, 0.20)[as.integer(dat$G)] +
+   0.40 * (dat$ST == "Autumn" & dat$G == "V3") + 
+   -0.05 * (dat$ST == "Spring" & dat$G == "V5") + 
+   0.20 * (dat$Year == "2019") +
+   rnorm(nrow(dat), 0, 0.15)  # add some noise
+```
+
+Run the model of ANOVA
+
+```{r}
+aov(yield ~ ST * Genotype * Year + Error(Block/ST), data = dat)
+```
+
+Running a linear mixed model
+
+```{r}
+model <- lmer(yield ~ Genotype * ST * Year + (1|Block) + (1|Block:ST),
+              data = dat)
+anova(model)  # Satterthwaite F-tests
+```
+
+Diagnostic of the linear mixed model
+
+```{r}
+plot(model)
+summary(model)
+```
+
+```{r}
+model2 <- lmer(yield ~ Genotype + ST + Genotype * ST * Year + (1|Block) + (1|Block:ST),
+              data = dat)
+anova(model2)
+```
+
+```{r}
+summary(model2)
+```
